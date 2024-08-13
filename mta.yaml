@@ -1,0 +1,93 @@
+_schema-version: "3.2"
+ID: Biat
+description: Biat MTA Project
+version: 0.0.1
+modules:
+- name: Biat-dest-content
+  type: com.sap.application.content
+  requires:
+  - name: Biat-destination-service
+    parameters:
+      content-target: true
+  - name: Biat-repo-host
+    parameters:
+      service-key:
+        name: Biat-repo-host-key
+  - name: Biat-uaa
+    parameters:
+      service-key:
+        name: Biat-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: Biat_repo_host
+          ServiceInstanceName: Biat-html5-srv
+          ServiceKeyName: Biat-repo-host-key
+          sap.cloud.service: Biat
+        - Authentication: OAuth2UserTokenExchange
+          Name: Biat_uaa
+          ServiceInstanceName: Biat-xsuaa-srv
+          ServiceKeyName: Biat-uaa-key
+          sap.cloud.service: Biat
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: Biat-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: Biat-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - biatfioriapp.zip
+      name: biatfioriapp
+      target-path: resources/
+- name: biatfioriapp
+  type: html5
+  path: biat.fiori.app
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: Biat-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: Biat-xsuaa-srv
+    service-plan: application
+- name: Biat-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: Biat-destination-service
+    service-plan: lite
+- name: Biat-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: Biat-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo

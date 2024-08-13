@@ -1,0 +1,28 @@
+<mvc:View controllerName="biat.fiori.app.controller.Biat"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+        <IconTabBar id="iconTabBar2" headerMode="Inline" class="sapUiResponsiveContentPadding">
+            <items>
+                <IconTabFilter id="_IDGenIconTabFilter1" icon="sap-icon://my-sales-order" key="info" text="{i18n>commandeAchat}"  visible="{=${userInfo>/customAttributes/position} === 'R'}">
+                    <content>
+                        <List noDataText="Drop list items here" id="list0_1717519890372" items="{/commandeAchat}">
+                            <items>
+                                <StandardListItem type="Navigation" title="EBELN ({Ebeln}) EKGRP ({Ekgrp})" description="Name : {Ernam}"/>
+                            </items>
+                        </List>
+                    </content>
+                </IconTabFilter>
+                <IconTabFilter id="_IDGenIconTabFilter2" icon="sap-icon://credit-card" key="attachments" text="{i18n>demandeAchat}">
+                    <content>
+                        <List noDataText="Drop list items here" id="list0" items="{/demandeAchat}">
+                            <items>
+                                <StandardListItem type="Navigation" title="{TXZ01}" description="Name: {Ernam} EKGRP: {Ekgrp}" id="item0" />
+                            </items>
+                        </List>
+                    </content>
+                </IconTabFilter>
+            </items>
+        </IconTabBar>
+    </Page>
+</mvc:View>
